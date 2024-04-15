@@ -90,10 +90,11 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-	uint8_t tx_buff[] = "Hello World";
+	uint8_t welcome[] = "Welcome ";
+	uint8_t pin_15_char;
 
 	HAL_Delay(1000);
-	HAL_UART_Transmit(&huart1, tx_buff, 12, 10000);
+	HAL_UART_Transmit(&huart1, welcome, 10, HAL_MAX_DELAY);
 
   /* USER CODE END 2 */
 
@@ -101,6 +102,19 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	while (1) {
     /* USER CODE END WHILE */
+
+		pin_15_char = 0;
+
+		for(int i=0; i<8; i++){
+			HAL_Delay(900);
+			pin_15_char |= HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) << (7-i);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+			HAL_Delay(100);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+		}
+
+		HAL_UART_Transmit(&huart1, (uint8_t*)"Char: ", 6, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart1, &pin_15_char, 1, HAL_MAX_DELAY);
 
     /* USER CODE BEGIN 3 */
 	}
